@@ -14,6 +14,6 @@ COPY . .
 
 # ENVS
 ENV HOST_URL="sqlite:///server.db"
-ENV VEHICLE_LIMIT=3
+ENV VEHICLE_LIMIT=2
 
 CMD ["flask", "--app", "main.py", "run", "--host", "0.0.0.0", "-p", "5000"]
