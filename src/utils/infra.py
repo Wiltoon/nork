@@ -12,6 +12,7 @@ class SqliteInfrastructure:
     def __get_connection(cls):
         if cls.connection is None:
             engine = sqlalchemy.create_engine(config("HOST_URL"))
+            
             cls.connection = engine.connect()
         return cls.connection
 
@@ -24,12 +25,13 @@ class SqliteInfrastructure:
 
     @classmethod
     def script_create_customer_table(cls):
-        sql_script = """CREATE TABLE IF NOT EXISTS CUSTOMER(
-                        ID INTEGER PRIMARY KEY,
-                        ID_CITY VARCHAR(9),
-                        NAME VARCHAR (50),
-                        PHONE VARCHAR (16),
-                        SALE_OPPORTUNITY INT)
+
+        sql_script = """CREATE TABLE IF NOT EXISTS customer(
+                        id INTEGER PRIMARY KEY,
+                        id_city VARCHAR(9),
+                        name VARCHAR (50),
+                        phone VARCHAR (16),
+                        sale_opportunity INT)
                    """
         connection = cls.__get_connection()
         connection.execute(sql_script)

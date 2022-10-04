@@ -8,6 +8,7 @@ from asgiref.wsgi import WsgiToAsgi
 
 asgi_app = WsgiToAsgi(app)
 
+
 SqliteInfrastructure.script_create_customer_table()
 SqliteInfrastructure.script_create_vehicle_table()
 

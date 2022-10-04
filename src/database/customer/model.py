@@ -4,9 +4,9 @@ from sqlalchemy import Column, Integer, String, Boolean
 Base = declarative_base()
 
 class CustomerModel(Base):
-    __tablename__ = "CUSTOMER"
+    __tablename__ = "customer"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
+    name = Column(String(50), nullable=False, index=True)
     phone = Column(String(16), nullable=False)
     id_city = Column(String(9))
     sale_opportunity = Column(Boolean, nullable=False)
