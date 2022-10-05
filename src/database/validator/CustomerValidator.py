@@ -4,9 +4,9 @@ from src.database.enums.enums import Colors, VehicleModelTypes
 class CustomerValidator(BaseModel):
     name: constr(max_length=50)
     phone: constr(max_length=16)
-    id_city: constr(max_length=9)
+    idcity: constr(max_length=9)
 
-    sale_opportunity: bool = True
+    sale_opportunity: bool = 1
 
     class Config:
         extra = Extra.forbid

@@ -7,8 +7,9 @@ from src.database.vehicle.model import VehicleModel
 
 customer_payload = {
     "name": "Gustavo",
-    "id_city":"NT0002401",
-    "phone": "12912344321"
+    "idcity":"NT0002401",
+    "phone": "12912344321",
+    "sale_opportunity":1
 }
 
 vehicle_payload = {
@@ -31,7 +32,7 @@ vehicle_orm_model = [
 customer_orm_model = [
     CustomerModel(
         name=customer_payload_validated.name,
-        id_city=customer_payload_validated.id_city,
+        idcity=customer_payload_validated.idcity,
         phone=customer_payload_validated.phone,
         sale_opportunity=customer_payload_validated.sale_opportunity,
     )

@@ -1,24 +1,29 @@
+from flask_sqlalchemy import SQLAlchemy
+
 from src.database.enums.enums import Colors, VehicleModelTypes
 
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey
+db = SQLAlchemy()
 
-Base = declarative_base()
-
-
-class VehicleModel(Base):
+class VehicleModel(db.Model):
     __tablename__ = "vehicle"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    customer_id = Column(Integer, ForeignKey('customer.id'), nullable=False)
-    name = Column(String(15))
-    color = Column(String(8), nullable=False)
-    model = Column(String(15), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), nullable=False)
+    name = db.Column(db.String(15))
+    color = db.Column(db.String(8), nullable=False)
+    model = db.Column(db.String(15), nullable=False)
 
     def __init__(self, customer_id: int, color: Colors, model: VehicleModelTypes, name: str):
         self.customer_id = customer_id
         self.color = color
         self.name = name
         self.model = model
+
+    @staticmethod
+    def serialize_list(unserialized_vehicles_list):
+        serialized_vehicles_list = []
+        for VehicleModel in unserialized_vehicles_list:
+            serialized_vehicles_list.append(VehicleModel.as_dict())
+        return serialized_vehicles_list
 
     def as_dict(self):
         vehicle = {

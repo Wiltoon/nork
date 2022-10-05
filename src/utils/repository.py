@@ -1,11 +1,11 @@
 from src.database.customer.model import CustomerModel
 from src.database.vehicle.model import VehicleModel
-from src.utils.infra import SqliteInfrastructure
+from src.utils.infra import PostgreSQLInfrastructure
 
 
-class SqliteRepository:
+class PostgreSQLRepository:
 
-    infra = SqliteInfrastructure
+    infra = PostgreSQLInfrastructure
 
     @classmethod
     def insert_customer(cls, customer: CustomerModel):

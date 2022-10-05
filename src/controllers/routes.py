@@ -1,7 +1,7 @@
 from json import dumps
 from http import HTTPStatus
 
-from flask import Response, request, Flask
+from flask import Response, request, Flask, jsonify
 from flask_restful import Resource
 
 from src.database.exceptions.exception import VehicleLimit, CustomerNotFound
@@ -11,14 +11,13 @@ from src.utils.services import CustomerService
 
 from loguru import logger
 
-app = Flask("Nork")
 
 class ListCustomers(Resource):
-    async def post(self) -> Response:
+    def post(self) -> Response:
         try:
             raw_payload = request.json
             payload_validated = CustomerValidator(**raw_payload)
-            success = await CustomerService.register_new_customer(
+            success = CustomerService.register_new_customer(
                 payload_validated=payload_validated
             )
             response = {"success": success, "message": "Customer registered with success!"}
@@ -31,14 +30,16 @@ class ListCustomers(Resource):
 
         except Exception as ex:
             logger.error(ex)
+            print(ex)
             response = {"success": False, "message": "Error on register new client"}
             return Response(dumps(response), status=HTTPStatus.INTERNAL_SERVER_ERROR)
-    async def get(self):
+    def get(self):
         try:
-            result = await CustomerService.get_all_customers()
+            result = CustomerService.get_all_customers()
+            print(result)
             response = {
                 "success": True,
-                "result": result,
+                "result": result
             }
             return Response(dumps(response), status=HTTPStatus.OK)
 
@@ -47,27 +48,27 @@ class ListCustomers(Resource):
             response = {"success": False, "message": "Error on get customers"}
             return Response(dumps(response), status=HTTPStatus.INTERNAL_SERVER_ERROR)
 
-class EspecificCustomer(Resource):
-    async def put(self, id) -> Response:
-        try:
-            result = await CustomerService.get_all_customers()
-            raw_payload = request.json
-            payload_validated = CustomerValidator(**raw_payload)
-            success = await CustomerService.register_new_customer(
-                payload_validated=payload_validated
-            )
-            response = {"success": success, "message": "Customer updated with success!"}
-            return Response(dumps(response), status=HTTPStatus.OK)
-
-        except ValueError as ex:
-            logger.error(ex)
-            response = {"result": False, "message": "Invalid params"}
-            return Response(dumps(response), status=HTTPStatus.BAD_REQUEST)
-
-        except Exception as ex:
-            logger.error(ex)
-            response = {"success": False, "message": "Error on register new client"}
-            return Response(dumps(response), status=HTTPStatus.INTERNAL_SERVER_ERROR)
+# class EspecificCustomer(Resource):
+#     async def put(self, id) -> Response:
+#         try:
+#             result = await CustomerService.get_all_customers()
+#             raw_payload = request.json
+#             payload_validated = CustomerValidator(**raw_payload)
+#             success = await CustomerService.register_new_customer(
+#                 payload_validated=payload_validated
+#             )
+#             response = {"success": success, "message": "Customer updated with success!"}
+#             return Response(dumps(response), status=HTTPStatus.OK)
+#
+#         except ValueError as ex:
+#             logger.error(ex)
+#             response = {"result": False, "message": "Invalid params"}
+#             return Response(dumps(response), status=HTTPStatus.BAD_REQUEST)
+#
+#         except Exception as ex:
+#             logger.error(ex)
+#             response = {"success": False, "message": "Error on register new client"}
+#             return Response(dumps(response), status=HTTPStatus.INTERNAL_SERVER_ERROR)
 
 class LinkVehicles(Resource):
     async def post(self, customer_id: int) -> Response:
@@ -106,7 +107,7 @@ class LinkVehicles(Resource):
 class ListVehicles(Resource):
     async def get(self) -> Response:
         try:
-            result = await CustomerService.get_all_cars()
+            result = await CustomerService.get_all_vehicles()
             response = {
                 "success": True,
                 "result": result,
