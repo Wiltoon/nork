@@ -1,3 +1,5 @@
+from cmath import exp
+from src.database.validator import CustomerValidator
 from src.database.customer.model import CustomerModel
 from src.database.vehicle.model import VehicleModel
 from src.utils.infra import PostgreSQLInfrastructure
@@ -11,23 +13,55 @@ class PostgreSQLRepository:
     def insert_customer(cls, customer: CustomerModel):
         session = cls.infra.get_session()
         session.add(customer)
-        session.commit()
-        session.close()
+        try:
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
     @classmethod
     def insert_vehicle(cls, vehicle: VehicleModel):
         session = cls.infra.get_session()
         session.add(vehicle)
-        session.commit()
-        session.close()
+        try:
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
     @classmethod
     def update_sale_opportunity_status(cls, customer_id: int):
         session = cls.infra.get_session()
         client = session.query(CustomerModel).get(customer_id)
         client.sale_opportunity = False
-        session.commit()
-        session.close()
+        try:
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+    
+    @classmethod
+    def update_customer(cls, customer_id: int, payload: CustomerValidator):
+        session = cls.infra.get_session()
+        customer = session.query(CustomerModel).get(customer_id)
+        customer.phone = payload.phone
+        customer.name = payload.name
+        customer.idcity = payload.idcity
+        customer.sale_opportunity = payload.sale_opportunity
+        try:
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+        return customer
 
     @classmethod
     def get_all_vehicles_by_id(cls, customer_id: int):

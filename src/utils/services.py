@@ -24,6 +24,14 @@ class CustomerService:
         return True
 
     @classmethod
+    def update_customer_by_id(cls, payload_validated: CustomerValidator, id: int):
+        customer = cls.repository.update_customer(customer_id=id, payload=payload_validated)
+        result = {
+            "status": "OK"
+        }
+        return result
+
+    @classmethod
     def linking_vehicle_to_owner(
         cls, payload_validated: VehicleValidator, customer_id: int
     ) -> bool:
@@ -54,6 +62,18 @@ class CustomerService:
         customers = cls.repository.get_all_customers()
         result = {"customers": [customer.as_dict() for customer in customers]}
         return result
+    
+    @classmethod
+    def get_customer_by_id(cls, id):
+        customer = cls.repository.get_customer_by_id(customer_id=id)
+        vehicles = cls.repository.get_all_vehicles_by_id(customer_id=id)
+        vs = [vehicle.as_dict() for vehicle in vehicles]
+        result = {
+            "customer": customer.as_dict(),
+            "vehicles": vs,
+            "sale_oportunitty": (len(vs) < 3)}
+        return result
+    
 
     @classmethod
     def get_all_vehicles(cls):

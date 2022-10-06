@@ -20,8 +20,11 @@ class ListCustomers(Resource):
             success = CustomerService.register_new_customer(
                 payload_validated=payload_validated
             )
-            response = {"success": success, "message": "Customer registered with success!"}
-            return Response(dumps(response), status=HTTPStatus.OK)
+            response = {
+                "success": success, 
+                "message": "Customer registered with success!"
+            }
+            return Response(dumps(response), status=HTTPStatus.CREATED)
 
         except ValueError as ex:
             logger.error(ex)
@@ -36,7 +39,6 @@ class ListCustomers(Resource):
     def get(self):
         try:
             result = CustomerService.get_all_customers()
-            print(result)
             response = {
                 "success": True,
                 "result": result
@@ -48,27 +50,48 @@ class ListCustomers(Resource):
             response = {"success": False, "message": "Error on get customers"}
             return Response(dumps(response), status=HTTPStatus.INTERNAL_SERVER_ERROR)
 
-# class EspecificCustomer(Resource):
-#     async def put(self, id) -> Response:
-#         try:
-#             result = await CustomerService.get_all_customers()
-#             raw_payload = request.json
-#             payload_validated = CustomerValidator(**raw_payload)
-#             success = await CustomerService.register_new_customer(
-#                 payload_validated=payload_validated
-#             )
-#             response = {"success": success, "message": "Customer updated with success!"}
-#             return Response(dumps(response), status=HTTPStatus.OK)
-#
-#         except ValueError as ex:
-#             logger.error(ex)
-#             response = {"result": False, "message": "Invalid params"}
-#             return Response(dumps(response), status=HTTPStatus.BAD_REQUEST)
-#
-#         except Exception as ex:
-#             logger.error(ex)
-#             response = {"success": False, "message": "Error on register new client"}
-#             return Response(dumps(response), status=HTTPStatus.INTERNAL_SERVER_ERROR)
+class EspecificCustomer(Resource):
+    def get(self, id) -> Response:
+        try:
+            result = CustomerService.get_customer_by_id(id)
+            response = {
+                "success": True, 
+                "message": result
+            }
+            return Response(dumps(response), status=HTTPStatus.OK)
+
+        except ValueError as ex:
+            logger.error(ex)
+            response = {"result": False, "message": "NOT FOUND"}
+            return Response(dumps(response), status=HTTPStatus.NOT_FOUND)
+
+        except Exception as ex:
+            logger.error(ex)
+            response = {"success": False, "message": "Error for search by id_customer"}
+            return Response(dumps(response), status=HTTPStatus.NOT_FOUND)
+    def put(self, id) -> Response:
+        try:
+            raw_payload = request.json
+            payload_validated = CustomerValidator(**raw_payload)
+            result = CustomerService.update_customer_by_id(
+                payload_validated=payload_validated,
+                id=id
+            )
+            response = {
+                "success" : True,
+                "message" : result
+            }
+            return Response(dumps(response), status=HTTPStatus.OK)
+
+        except ValueError as ex:
+            logger.error(ex)
+            response = {"result": False, "message": "NOT FOUND"}
+            return Response(dumps(response), status=HTTPStatus.NOT_FOUND)
+
+        except Exception as ex:
+            logger.error(ex)
+            response = {"success": False, "message": "Error for search by id_customer"}
+            return Response(dumps(response), status=HTTPStatus.NOT_FOUND)
 
 class LinkVehicles(Resource):
     async def post(self, customer_id: int) -> Response:

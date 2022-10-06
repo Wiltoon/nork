@@ -1,0 +1,4 @@
+FROM postgres:14-alpine
+COPY ./norktown.sql /docker-entrypoint-norktowndb.d
+RUN chmod a+r /docker-entrypoint-norktowndb.d/*
+EXPOSE 5432

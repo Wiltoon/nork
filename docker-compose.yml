@@ -1,0 +1,58 @@
+# Versão da imagem oficial do Python rodada quando for instanciada pelo docker-compose.
+version: "3.9"
+
+# Serviços
+services:
+  # Serviço principal
+  nork:
+    # Informações de build.
+    build:
+      # Diretório do projeto
+      context: .
+    # Link entre a porta do container e a porta local.
+    ports:
+      - "8080:8080"
+    # Link de dados entre container e local.
+    volumes:
+      - ./nork:/nork
+    # Dispara comando para inicializar app.py.
+    # command: 
+    #  sh -c flask run
+    # Definição de environment variables. 'os.environ.get('DB_HOST')'
+    environment:
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    # Garante que o serviço 'db' seja inicializado primeiro.
+    depends_on:
+      - db
+
+  db:
+    build: 
+      context: .
+      dockerfile: ./Dockerfile_db
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: nork_db
+      POSTGRES_USER: user_db
+      POSTGRES_PASSWORD: password_db
+    ports:
+      - "5432:5432"
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: solda@pgadmin.email
+      PGADMIN_DEFAULT_PASSWORD: solda_pgadmin_senha
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:      
+      - ./servers.json:/pgadmin4/servers.json
+
+# Referência para persistência de dados locais.
+volumes:
+  dev-db-data:

@@ -6,7 +6,7 @@ class CustomerValidator(BaseModel):
     phone: constr(max_length=16)
     idcity: constr(max_length=9)
 
-    sale_opportunity: bool = 1
+    sale_opportunity: int = 1
 
     class Config:
         extra = Extra.forbid
