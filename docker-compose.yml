@@ -1,58 +1,64 @@
-# Versão da imagem oficial do Python rodada quando for instanciada pelo docker-compose.
 version: "3.9"
 
 # Serviços
 services:
-  # Serviço principal
-  nork:
-    # Informações de build.
+  database:
+    image: postgres:14.5-alpine
     build:
-      # Diretório do projeto
-      context: .
-    # Link entre a porta do container e a porta local.
-    ports:
-      - "8080:8080"
-    # Link de dados entre container e local.
-    volumes:
-      - ./nork:/nork
-    # Dispara comando para inicializar app.py.
-    # command: 
-    #  sh -c flask run
-    # Definição de environment variables. 'os.environ.get('DB_HOST')'
-    environment:
-      - DB_HOST=db
-      - DB_NAME=devdb
-      - DB_USER=devuser
-      - DB_PASS=changeme
-    # Garante que o serviço 'db' seja inicializado primeiro.
-    depends_on:
-      - db
-
-  db:
-    build: 
       context: .
       dockerfile: ./Dockerfile_db
+    container_name: db
+    restart: always
+    user: postgres  # importante definir o usuário
     volumes:
-      - dev-db-data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: nork_db
-      POSTGRES_USER: user_db
-      POSTGRES_PASSWORD: password_db
+      - LC_ALL=C.UTF-8
+      - POSTGRES_PASSWORD=postgres  # senha padrão
+      - POSTGRES_USER=postgres  # usuário padrão
+      - POSTGRES_DB=db  # necessário porque foi configurado assim no settings
     ports:
-      - "5432:5432"
-    
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: solda@pgadmin.email
-      PGADMIN_DEFAULT_PASSWORD: solda_pgadmin_senha
-    ports:
-      - "5050:80"
-    depends_on:
-      - db
-    volumes:      
-      - ./servers.json:/pgadmin4/servers.json
+      - "5434:5432"  # repare na porta externa 5434
+    networks:
+      - postgres
 
-# Referência para persistência de dados locais.
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+      - ./server.json:/pgadmin4/servers.json
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - 5050:80
+    networks:
+      - postgres
+
+  nork:
+      container_name: nork
+      build:
+        context: .
+        dockerfile: ./Dockerfile
+      ports:
+        - 8080:8080
+      volumes:
+        - ./nork:/nork
+      environment:
+        - FLASK_APP=main.py
+        - DB_HOST=localhost
+        - POSTGRES_DB=db
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+      depends_on:
+        - database
+
+networks:
+  postgres:
+
 volumes:
-  dev-db-data:
+  pgdata:  # mesmo nome do volume externo definido na linha 10
+  pgadmin:

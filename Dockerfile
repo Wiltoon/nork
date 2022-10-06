@@ -1,19 +1,22 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.8.6
 
-WORKDIR /nork
+ENV PYTHONUNBUFFERED 1
 
+WORKDIR /nork
 # Install pip requirements
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY requeriments.txt .
+RUN pip install -r requeriments.txt
 
 # PORT
-EXPOSE 5000
+EXPOSE 8080
 
 COPY . .
-
 # ENVS
-ENV HOST_URL="sqlite:///server.db"
+ENV FLASK_APP='main.py'
+ENV HOST_URL='postgresql+psycopg2://postgres:postgres@localhost:5434/nork'
 ENV VEHICLE_LIMIT=3
 
-CMD ["flask", "--app", "main.py", "run", "--host", "0.0.0.0", "-p", "5000"]
+#ENV PATH="/py/bin:$PATH"
+
+CMD ["python3", "-m" , "flask", "run", "--host=0.0.0.0"]

@@ -5,7 +5,7 @@
             "Group": "Grupo",
             "Port": 5432,
             "Host": "db",
-            "Username": "user_db",            
+            "Username": "postgres",
             "SSLMode": "prefer",
             "MaintenanceDB": "postgres"
         }

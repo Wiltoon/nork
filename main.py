@@ -12,7 +12,7 @@ from asgiref.wsgi import WsgiToAsgi
 app = Flask(__name__)
 
 # Incializar objeto central db do SQLAlchemy.
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:postgres@localhost:5432/norktown'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:0254@localhost:5433/norktown'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'secret string'
 db = SQLAlchemy(app)
@@ -29,7 +29,10 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     # app.run()
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    app.run(
+        host='0.0.0.0',
+        port=8080
+    )
     # app.config.update(
     #     SESSION_COOKIE_SECURE=True,
     #     SESSION_COOKIE_HTTPONLY=True,

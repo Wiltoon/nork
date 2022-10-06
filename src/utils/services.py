@@ -48,7 +48,7 @@ class CustomerService:
     def check_if_customer_can_have_more_vehicles(cls, customer_id: int):
         vehicles = cls.repository.get_all_vehicles_by_id(customer_id=customer_id)
         result = [vehicle for vehicle in vehicles]
-        if len(result) >= int(config("VEHICLE_LIMIT")):
+        if len(result) >= int(config("VEHICLE_LIMIT", default=3)):
             raise VehicleLimit
 
     @classmethod

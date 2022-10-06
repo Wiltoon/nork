@@ -2,8 +2,8 @@ import sqlalchemy
 from sqlalchemy.orm import Session, declarative_base
 
 from decouple import config
-
-HOST_URL = 'postgresql+psycopg2://postgres:postgres@localhost:5432/norktown'
+HOST_URL = 'postgresql+psycopg2://postgres:0254@localhost:5433/norktown'
+# HOST_URL = 'postgresql+psycopg2://'+config('DB_USER')+':'config('DB_PASS')+'@'+config('DB_HOST')+':5434/nork'
 class PostgreSQLInfrastructure:
 
     connection = None
